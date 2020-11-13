@@ -1,0 +1,9 @@
+Primary: #52378A
+Secondary: #003388
+Info: #cccccc
+Light: #f9f9f9
+Dark: #262626
+Danger: #d7271d
+Success: #1fad23
+Warning: #fcb900
+Highlight: #7D06A5
