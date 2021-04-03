@@ -11,17 +11,20 @@ import ProductCard from "../components/ProductCard"
 import useProducts from "../hooks/useProducts"
 import useFilter from "../hooks/useFilter"
 import Newsletter from "../components/Newsletter"
+import urlSlug from "url-slug"
+import { makeStyles } from "@material-ui/core/styles"
+import { Link } from "gatsby"
 
-const Products = ({ location }) => {
-  const [filtered, setFiltered] = useState([])
-  const [indexCategory, setIndexCategory] = useState({
-    name: location.state.productName,
-    id: location.state.productId,
-  })
-  const [indexGoal, setIndexGoal] = useState({
-    name: location.state.productNameGoal,
-    id: location.state.productIdGoal,
-  })
+const useStyles = makeStyles(theme => ({
+  link: {
+    textDecoration: "none",
+    color: theme.palette.common.black,
+  },
+}))
+
+const Products = () => {
+  const classes = useStyles()
+
 
   //GraphQL Products
   const response = useProducts()
@@ -29,61 +32,33 @@ const Products = ({ location }) => {
 
   //Product Filter
   const {
-    category,
-    goal,
     categories,
     goals,
-    selectedIndex,
-    setSelectedIndex,
-    setGoal,
-    setCategory,
-    handleCategoryClick,
-    handleGoalClick,
   } = useFilter()
 
-  useEffect(() => {
-    if (indexCategory) {
-      setCategory(indexCategory.name)
-      setSelectedIndex(indexCategory.id)
-    }
-    if (indexGoal) {
-      setGoal(indexGoal.name)
-      setSelectedIndex(indexGoal.id)
-    }
-    if (goal || category) {
-      const filter = products.filter(
-        product =>
-          product.goal.name === goal || product.category.name === category
-      )
-      setFiltered(filter)
-      setIndexCategory("")
-      setIndexGoal("")
-    } else {
-      setFiltered(products)
-    }
-
-  }, [category, products, goal])
+  
+  
 
   return (
     <>
       <Container style={{ paddingTop: "2rem" }}>
         <Grid container spacing={3}>
-          <Grid item xs={0} md={2}>
+          <Grid item md={2}>
             <Typography variant="h5">
               <strong>By Category</strong>
             </Typography>
             <List component="nav" aria-label="Category List of Products">
               {categories.map(category => (
-                <ListItem
-                  button
-                  selected={selectedIndex === category.id}
-                  key={category.id}
-                  onClick={event =>
-                    handleCategoryClick(event, category.name, category.id)
-                  }
-                >
+                <Link
+                to={`/products/categories/${urlSlug(category.name, {
+                  separator: "_",
+                })}`}
+                className={classes.link}
+              >
+                <ListItem button key={category.id}>
                   <ListItemText primary={category.name} />
                 </ListItem>
+              </Link>
               ))}
             </List>
             <Typography variant="h5">
@@ -91,22 +66,24 @@ const Products = ({ location }) => {
             </Typography>
             <List component="nav" aria-label="secondary mailbox folder">
               {goals.map(goal => (
-                <ListItem
-                  button
-                  selected={selectedIndex === goal.id}
-                  key={goal.id}
-                  onClick={event => handleGoalClick(event, goal.name, goal.id)}
-                >
-                  <ListItemText primary={goal.name} />
-                </ListItem>
+                <Link
+                to={`/products/goals/${urlSlug(goal.name, {
+                  separator: "_",
+                })}`}
+                className={classes.link}
+              >
+              <ListItem button key={goal.id}>
+                <ListItemText primary={goal.name} />
+              </ListItem>
+              </Link>
               ))}
             </List>
           </Grid>
           <Grid item md={10} xs={12}>
             <Grid container spacing={2}>
-              {filtered.map(product => (
-                <Grid item xs={6} md={3} style={{ paddingBottom: "2rem" }}>
-                  <ProductCard key={product.id} product={product} />
+              {products.map(product => (
+                <Grid item xs={6} md={3} style={{ paddingBottom: "2rem" }} key={product.id}>
+                  <ProductCard product={product} />
                 </Grid>
               ))}
             </Grid>

@@ -22,6 +22,7 @@ const useFilter = () => {
     setCategory()
     setGoal()
   }
+  
   const handleCategoryClick = (event, value, index) => {
     cleanState()
     setSelectedIndex(index)

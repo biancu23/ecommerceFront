@@ -1,15 +1,14 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { fade, makeStyles } from "@material-ui/core/styles"
+import Search from "./Search"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 import IconButton from "@material-ui/core/IconButton"
 import Typography from "@material-ui/core/Typography"
-import InputBase from "@material-ui/core/InputBase"
 import Badge from "@material-ui/core/Badge"
 import MenuItem from "@material-ui/core/MenuItem"
 import Menu from "@material-ui/core/Menu"
 import MenuIcon from "@material-ui/icons/Menu"
-import SearchIcon from "@material-ui/icons/Search"
 import AccountCircle from "@material-ui/icons/AccountCircle"
 import MailIcon from "@material-ui/icons/Mail"
 import NotificationsIcon from "@material-ui/icons/Notifications"
@@ -17,14 +16,21 @@ import MoreIcon from "@material-ui/icons/MoreVert"
 
 import Drawer from "@material-ui/core/Drawer"
 import List from "@material-ui/core/List"
-import Divider from "@material-ui/core/Divider"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
-import InboxIcon from "@material-ui/icons/MoveToInbox"
 
 import { Link } from "gatsby"
-import { AccountBalanceRounded, FastfoodRounded, Favorite, FitnessCenterRounded, HelpRounded, ImportContactsRounded, ShoppingCartRounded, StoreRounded } from "@material-ui/icons"
+import {
+  AccountBalanceRounded,
+  FastfoodRounded,
+  Favorite,
+  FitnessCenterRounded,
+  HelpRounded,
+  ImportContactsRounded,
+  ShoppingCartRounded,
+  StoreRounded,
+} from "@material-ui/icons"
 
 const useStyles = makeStyles(theme => ({
   grow: {
@@ -100,9 +106,30 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Navbar = () => {
-  const classes = useStyles()
+  let cartQty = 0
 
+  if (typeof window !== `undefined`) {
+    cartQty = window.Snipcart.store.getState().cart.items.count
+  }
+  
+  const classes = useStyles()
+  const [cartItems, setCartItems] = useState(cartQty)
   const [state, setState] = useState(false)
+
+  
+
+  
+  
+
+useEffect(() => {
+
+  if (window.Snipcart) {
+    
+    setCartItems(cartQty)
+}
+
+}, [cartQty])
+
 
   const toggleDrawer = () => event => {
     if (
@@ -124,6 +151,8 @@ const Navbar = () => {
   const handleMobileMenuOpen = event => {
     setMobileMoreAnchorEl(event.currentTarget)
   }
+
+
 
   //Mobile menu
   const mobileMenuId = "primary-search-account-menu-mobile"
@@ -171,52 +200,64 @@ const Navbar = () => {
       onKeyDown={toggleDrawer()}
     >
       <List>
-        <Link to="/products" className={classes.link} style={{color: "inherit"}}>
+        <Link
+          to="/products"
+          className={classes.link}
+          style={{ color: "inherit" }}
+        >
           <ListItem button>
             <ListItemIcon>
               <StoreRounded />
             </ListItemIcon>
-            <ListItemText primary="Products" color="primary"/>
+            <ListItemText primary="Products" color="primary" />
           </ListItem>
         </Link>
-        <Link to="/blog" className={classes.link} style={{color: "inherit"}}>
+        <Link to="/blog" className={classes.link} style={{ color: "inherit" }}>
           <ListItem button>
             <ListItemIcon>
               <ImportContactsRounded />
             </ListItemIcon>
-            <ListItemText primary="Blog" color="primary"/>
+            <ListItemText primary="Blog" color="primary" />
           </ListItem>
         </Link>
-        <Link to="/training" className={classes.link} style={{color: "inherit"}}>
+        <Link
+          to="/training"
+          className={classes.link}
+          style={{ color: "inherit" }}
+        >
           <ListItem button>
             <ListItemIcon>
               <FitnessCenterRounded />
             </ListItemIcon>
-            <ListItemText primary="Training" color="primary"/>
+            <ListItemText primary="Training" color="primary" />
           </ListItem>
         </Link>
-        <Link to="/nutrition" className={classes.link} style={{color: "inherit"}}>
+        <Link
+          to="/nutrition"
+          className={classes.link}
+          style={{ color: "inherit" }}
+        >
           <ListItem button>
             <ListItemIcon>
               <FastfoodRounded />
             </ListItemIcon>
-            <ListItemText primary="Nutrition" color="primary"/>
+            <ListItemText primary="Nutrition" color="primary" />
           </ListItem>
         </Link>
-        <Link to="/help" className={classes.link} style={{color: "inherit"}}>
+        <Link to="/help" className={classes.link} style={{ color: "inherit" }}>
           <ListItem button>
             <ListItemIcon>
               <HelpRounded />
             </ListItemIcon>
-            <ListItemText primary="Help" color="primary"/>
+            <ListItemText primary="Help" color="primary" />
           </ListItem>
         </Link>
-        <Link to="/about" className={classes.link} style={{color: "inherit"}}>
+        <Link to="/about" className={classes.link} style={{ color: "inherit" }}>
           <ListItem button>
             <ListItemIcon>
               <AccountBalanceRounded />
             </ListItemIcon>
-            <ListItemText primary="About" color="primary"/>
+            <ListItemText primary="About" color="primary" />
           </ListItem>
         </Link>
       </List>
@@ -241,7 +282,7 @@ const Navbar = () => {
           <Link to="/" className={classes.link}>
             <Typography
               className={classes.title}
-              variant="h6"
+              variant="h5"
               noWrap
               color="primary"
             >
@@ -249,38 +290,30 @@ const Navbar = () => {
             </Typography>
           </Link>
           <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ "aria-label": "search" }}
-            />
+            <Search />
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <IconButton aria-label="show 4 new mails" color="inherit">
               <Badge color="secondary">
-                <HelpRounded color="primary" />
+                <HelpRounded color="primary" fontSize="large" />
               </Badge>
             </IconButton>
             <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={5} color="secondary">
-                <ShoppingCartRounded color="primary" />
-              </Badge>
+              <Link className="snipcart-checkout">
+                <Badge badgeContent={cartItems} color="secondary">
+                  <ShoppingCartRounded color="primary" fontSize="large" />
+                </Badge>
+              </Link>
             </IconButton>
             <IconButton aria-label="show 17 new notifications" color="inherit">
               <Badge color="secondary">
-                <Favorite color="error" />
+                <Favorite color="error" fontSize="large" />
               </Badge>
             </IconButton>
             <IconButton>
               <Link to="/login" className={classes.link}>
-                <AccountCircle color="primary" />
+                <AccountCircle color="primary" fontSize="large" />
               </Link>
             </IconButton>
           </div>

@@ -1,7 +1,7 @@
 const urlSlug = require("url-slug")
 
 exports.createPages = async ({ actions, graphql, reporter }) => {
-  const result = await graphql(`
+  const resultProducts = await graphql(`
     query {
       allStrapiProducts {
         nodes {
@@ -12,13 +12,48 @@ exports.createPages = async ({ actions, graphql, reporter }) => {
     }
   `)
 
-  //console.log("products:", JSON.stringify(result.data.allStrapiProducts ) );
+  const resultCategories = await graphql(`
+  query {
+    allStrapiCategories {
+      nodes {
+        id
+        name
+      }
+    }
+  }
+  `)
 
-  if (result.errors) {
-    reporter.panic("No results", result.errors)
+  const resultGoals = await graphql(`
+  query {
+    allStrapiGoals {
+      nodes {
+        id
+        name
+      }
+    }
+  }
+  
+  `)
+
+  if (resultProducts.errors) {
+    reporter.panic("No results", resultProducts.errors)
   }
 
-  const products = result.data.allStrapiProducts.nodes
+  if (resultCategories.errors) {
+    reporter.panic("No results", resultCategories.errors)
+  }
+
+  if (resultGoals.errors) {
+    reporter.panic("No results", resultGoals.errors)
+  }
+
+  const products = resultProducts.data.allStrapiProducts.nodes
+
+  const categories = resultCategories.data.allStrapiCategories.nodes
+
+  const goals = resultGoals.data.allStrapiGoals.nodes
+
+  
 
   // Crear los templates de propiedades
   products.forEach(product => {
@@ -33,4 +68,46 @@ exports.createPages = async ({ actions, graphql, reporter }) => {
       },
     })
   })
+
+  categories.forEach(category => {
+    actions.createPage({
+        
+      path: `products/categories/${urlSlug(category.name, {
+        separator: "_",
+      })}`,
+      component: require.resolve("./src/components/Categories.jsx"),
+      context: {
+        id: category.name,
+      },
+    })
+  })
+
+  goals.forEach(goal => {
+    actions.createPage({
+        
+      path: `products/goals/${urlSlug(goal.name, {
+        separator: "_",
+      })}`,
+      component: require.resolve("./src/components/Goals.jsx"),
+      context: {
+        id: goal.name,
+      },
+    })
+  })
+
+  exports.onCreateWebpackConfig = ({ stage, loaders, actions }) => {
+    if (stage === "build-html") {
+      actions.setWebpackConfig({
+        module: {
+          rules: [
+            {
+              test: /Snipcart/,
+              use: loaders.null(),
+            },
+          ],
+        },
+      })
+    }
+  }
+
 }

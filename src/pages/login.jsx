@@ -50,8 +50,21 @@ const Login = () => {
         .min(6, "Wrong Password.")
         .required("Wrong Password."),
     }),
-    onSubmit: valores => {
-      console.log(valores)
+    onSubmit: async value => {
+      
+      const response = await fetch("http://localhost:1337/auth/local/", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          identifier: value.email,
+          password: value.password,
+        })
+      })
+      const data = await response.json()
+
+      console.log('data', data)
     },
   })
 
@@ -109,7 +122,7 @@ const Login = () => {
                 >
                   LOGIN
                 </Button>
-                <Link to="/login" style={{textDecoration: "none"}}>
+                <Link to="/login" style={{ textDecoration: "none" }}>
                   <Typography color="secondary" style={{ paddingLeft: "1rem" }}>
                     Forgot your password?
                   </Typography>

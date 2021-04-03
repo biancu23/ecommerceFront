@@ -14,6 +14,7 @@ import Newsletter from "../components/Newsletter"
 import { Link } from "gatsby"
 import useGoals from "../hooks/useGoals"
 import useCategories from "../hooks/useCategories"
+import urlSlug from "url-slug"
 
 
 const useStyles = makeStyles(theme => ({
@@ -99,8 +100,10 @@ const IndexPage = () => {
                   </Grid>
                 </Grid>
                 <Link
-                  to="/products"
-                  state={{productNameGoal: goal.name, productIdGoal: goal.id}}
+                  to={`/products/goals/${urlSlug(goal.name, {
+                    separator: "_",
+                  })}`}
+                  key={goal.id}
                   style={{ textDecoration: "none" }}
                 >
                   <Button
@@ -135,10 +138,12 @@ const IndexPage = () => {
                 key={category.id}
               >
                 <Link
-                  to="/products"
+                  to={`/products/categories/${urlSlug(category.name, {
+                    separator: "_",
+                  })}`}
                   className={classes.blackLink}
                   style={{ width: "100%" }}
-                  state={{ productName: category.name, productId: category.id }}
+                  key={category.id}
                 >
                   <Button
                     size="large"

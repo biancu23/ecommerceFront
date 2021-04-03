@@ -12,6 +12,7 @@ import Image from "gatsby-image"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import Newsletter from "./Newsletter"
+import urlSlug from "url-slug"
 
 const useStyles = makeStyles(theme => ({
   productBackground: {
@@ -85,6 +86,7 @@ const ProductInfo = ({ data }) => {
     brand,
     price,
     image,
+    id
   } = data.allStrapiProducts.nodes[0]
 
   const formik = useFormik({
@@ -95,10 +97,10 @@ const ProductInfo = ({ data }) => {
       qty: Yup.number().required("Invalid quantity."),
     }),
     onSubmit: valores => {
-      console.log(valores)
     },
   })
 
+  console.log(image.sharp.fluid.src)
   return (
     <>
       <Container style={{ marginTop: "2rem" }}>
@@ -140,6 +142,14 @@ const ProductInfo = ({ data }) => {
                     {price}$
                   </Typography>
                   <Button
+                  className="snipcart-add-item"
+                  data-item-id={id}
+                  data-item-price={price}
+                  data-item-url={`https://fitecommerce.netlify.app/products/${urlSlug(name, {
+                    separator: "_",
+                  })}`}
+                  data-item-name={`${brand} ${name}`}
+                  data-item-image={image.sharp.fluid.src}
                     variant="contained"
                     size="large"
                     color="primary"

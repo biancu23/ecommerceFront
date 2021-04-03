@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
   productBackground: {
     backgroundColor: "#ebddf8",
+    padding: "1rem"
   },
 }))
 const ProductCard = ({ product }) => {
@@ -27,9 +28,9 @@ const ProductCard = ({ product }) => {
   return (
     <Card>
       <Link
-        to={urlSlug(name, {
+        to={`/products/${urlSlug(name, {
           separator: "_",
-        })}
+        })}`}
         className={classes.blackLink}
       >
         <CardActionArea>
